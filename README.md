@@ -45,7 +45,7 @@ Once you have these prerequisites in place, you'll be ready to set up and run "C
 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/Coding-Competition-Platform.git
+git clone https://github.com/Shubham-Jani/Coding-Contest-Platform.git
 cd Coding-Competition-Platform
 
 ```
