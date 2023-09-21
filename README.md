@@ -122,12 +122,9 @@ Once the containers are up and running, you can access the Coding-Competition-Pl
 
 ## ✍️ Authors <a name = "authors"></a>
 
-- [@](https://github.com/kylelobo) - Idea & Initial work
+- [@Shubham-Jani](https://github.com/Shubham-Jani) - Idea & Initial work
 
-See also the list of [contributors](https://github.com/kylelobo/The-Documentation-Compendium/contributors) who participated in this project.
 
 ## 🎉 Acknowledgements <a name = "acknowledgement"></a>
 
-- Hat tip to anyone whose code was used
-- Inspiration
-- References
+- Judge0
