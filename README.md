@@ -107,13 +107,14 @@ Once the containers are up and running, you can access the Coding-Competition-Pl
 
 ## ⛏️ Built Using <a name = "built_using"></a>
 
-- <img src="https://www.djangoproject.com/m/img/logos/django-logo-negative.png" alt="Django Icon" width="70" height="50"[Django](https://www.djangoproject.com/) - Web Framework
+- <img src="https://www.djangoproject.com/m/img/logos/django-logo-negative.png" alt="Django Icon" width="70" height="50">[Django](https://www.djangoproject.com/) - Web Framework
 - [Tailwind-CSS](https://tailwindcss.com/) -FrontEnd
   
 
 ## ✍️ Authors <a name = "authors"></a>
 
 - [@Shubham-Jani](https://github.com/Shubham-Jani) - Idea & Initial work
+
 
 
 ## 🎉 Acknowledgements <a name = "acknowledgement"></a>
