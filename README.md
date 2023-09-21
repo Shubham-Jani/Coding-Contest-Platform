@@ -1,6 +1,6 @@
 <p align="center">
   <a href="" rel="noopener">
- <img width=200px height=200px src="https://github.com/Shubham-Jani/Coding-Contest-Platform/blob/main/codingContestPlatformLogo.png" alt="Project logo"></a>
+ <img  src="https://github.com/Shubham-Jani/Coding-Contest-Platform/blob/main/codingContestPlatformLogo.png" alt="Project logo"></a>
 </p>
 
 <h3 align="center">Coding Contest Platform</h3>
