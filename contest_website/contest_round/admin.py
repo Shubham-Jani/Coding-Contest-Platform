@@ -1,10 +1,15 @@
 from django.contrib import admin
 from django import forms
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
-from .models import Problem, ContestRound, UserResponse, UserProfile, UserResponsePoints
+from .models import Problem, ContestRound, UserResponse, UserProfile, UserResponsePoints, HomePageContent
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 from django.utils import timezone
+
+
+class HomePageAdmin(admin.ModelAdmin):
+    model = HomePageContent
+    max_num = 1
 
 
 class UserProfileInline(admin.StackedInline):
@@ -87,4 +92,5 @@ class ResponsePointsAdmin(admin.ModelAdmin):
 admin.site.unregister(User)
 admin.site.register(User, CustomUserAdmin)
 admin.site.register(ContestRound, ContestRoundAdmin)
+admin.site.register(HomePageContent, HomePageAdmin)
 # admin.site.register(ResponsePointsAdmin)

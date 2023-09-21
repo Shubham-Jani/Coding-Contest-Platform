@@ -1,27 +1,12 @@
 {% extends 'base.html' %}
-
 {% block content %}
 <div class="min-h-screen flex flex-col justify-center items-center w-full">
-    <h2 class="text-2xl font-bold mb-4">Algorithm Arena Instructions:</h2>
-    <ul class="list-inside list-disc prose font-semibold">
-        <li>Algorithm Arena consists of three rounds: Easy, Medium, and Finals.</li>
-        <li>One must adhere to the specified time limits for each round.</li>
-        <li>Participants are expected to maintain a high level of sportsmanship and ethical behavior throughout the
-            competition.</li>
-        <li>No phones are allowed during the competition.</li>
-        <li>Tab switching or minimizing the window during the competition is strictly prohibited. Such actions may lead
-            to automatic submission of your work and disqualification.</li>
-        <li>Any attempt to cheat or gain an unfair advantage will lead to immediate disqualification.</li>
-        <li>You are being monitored throughout the competition.</li>
-        <li>Participants are responsible for ensuring that their code compiles and runs correctly on the platform before
-            submitting it. As in there is no second attempt for answering the question.</li>
-        <li>In case of any technical issues, you can contact our team for assistance.</li>
-        <li>Your answers and the time of submission both are tracked by the system.</li>
-        <li>Participants will be ranked on accuracy and speed. If two participants have the same kind of answer, the
-            participant who submitted earlier will get higher priority.</li>
-        <li>All decisions made by the team are final and binding. Trust in the fairness of the competition and our
-            team's judgment.</li>
-    </ul>
+    <h2 class="text-2xl font-bold mb-4">{{ homepage.title }}</h2>
+    <div>
+        <h1></h1>
+        <article class="prose lg:prose-lg">{{ homepage.content|safe }}
+        </article>
+    </div>
     <div class="m-4">
         <a href="{% url 'login' %}">
             <button class="btn btn-primary">

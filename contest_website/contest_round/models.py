@@ -3,6 +3,7 @@ from ckeditor_uploader.fields import RichTextUploadingField
 from django.contrib.auth.models import User
 import datetime
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 
 
 class SupportedLanguage(models.Model):
@@ -70,3 +71,18 @@ class UserResponse(models.Model):
 class UserResponsePoints(models.Model):
     user_response = models.ForeignKey(UserResponse, on_delete=models.CASCADE)
     marks = models.IntegerField()
+
+
+class HomePageContent(models.Model):
+    title = models.TextField(max_length=1000, default="Default Title")
+    content = RichTextUploadingField()
+
+    @classmethod
+    def check_max_objects(cls):
+        max_objects = 5  # Change this to your desired maximum limit
+        if cls.objects.count() >= max_objects:
+            raise ValidationError("Maximum number of objects reached.")
+
+    def save(self, *args, **kwargs):
+        self.check_max_objects()
+        super().save(*args, **kwargs)

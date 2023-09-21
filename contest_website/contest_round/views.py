@@ -6,7 +6,7 @@ from django.views import View
 from django.views.generic import TemplateView
 from django_ace import AceWidget
 from .forms import UserResponseForm, LanguageSelectionForm
-from .models import UserResponse, Problem, ContestRound, SupportedLanguage, UserProfile
+from .models import UserResponse, Problem, ContestRound, SupportedLanguage, UserProfile, HomePageContent
 from django.urls import reverse
 from django.http import HttpResponseNotAllowed
 from django.http import JsonResponse
@@ -17,8 +17,12 @@ import time
 from django.conf import settings
 
 
-class HomePageView(TemplateView):
+class HomePageView(View):
     template_name = "home_page.html"
+
+    def get(self, request):
+        content = HomePageContent.objects.first()
+        return render(request, self.template_name, {"homepage": content})
 
 
 @method_decorator(login_required, name='dispatch')
