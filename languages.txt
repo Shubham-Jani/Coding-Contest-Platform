@@ -1,0 +1,15 @@
+# Add Python
+python_language = SupportedLanguage(name='Python', identifier='python', judge0_id=71)
+python_language.save()
+
+# Add Java
+java_language = SupportedLanguage(name='Java', identifier='java', judge0_id=62)
+java_language.save()
+
+# Add C
+c_language = SupportedLanguage(name='C', identifier='c', judge0_id=50)
+c_language.save()
+
+# Add C++
+cpp_language = SupportedLanguage(name='C++', identifier='cpp', judge0_id=54)
+cpp_language.save()

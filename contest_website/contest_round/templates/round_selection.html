@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="flex items-center flex-col h-screen justify-center">
+    {% include 'user_profile.html' %}
+    <h1 class="font-sans text-3xl font-extrabold my-5">Round Selection:</h1>
+    {% for round in rounds %}
+    {% if round.has_started %}
+    <a href="{% url 'problem_page' round.id %}">
+        <button class="btn btn-primary" id="round-btn-{{ round.id }}" data-round-id="{{ round.id }}">
+            {{ round.round_label }}
+        </button>
+    </a>
+    {% else %}
+    <button class="btn btn-primary btn-disabled">
+        {{ round.round_label }}
+        (Not Available)
+    </button>
+    {% endif %}
+    {% endfor %}
+</div>
+
+{% endblock content %}

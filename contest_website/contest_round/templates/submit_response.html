@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+
+<script type="text/javascript" src="{% static " ckeditor/ckeditor-init.js" %}"></script>
+<script type="text/javascript" src="{% static " ckeditor/ckeditor/ckeditor.js" %}"></script>
+{% block content %}
+{% if has_round_started %}
+{{ form.media }}
+<div class="h-screen w-full">
+    <div class="w-full grid grid-cols-2">
+        <div class="border border-base-100 p-2 h-screen  overflow-scroll">
+            {% include 'remaining_time.html' with round=contest_round %}
+            {% include 'user_profile.html' %}
+            <p class=" text-xl font-bold my-5">{{ contest_round.round_label }}</p>
+            <p class=" text-2xl font-semibold my-5">{{ problem.problem_name }}</p>
+            <div>
+                <h1></h1>
+                <article class="prose lg:prose-lg">{{ problem.content|safe }}
+                </article>
+            </div>
+        </div>
+        <div class="h-screen overflow-scroll pb-1">
+            <form action="" method="post" class="w-full">
+                {% csrf_token %}
+                {% for field in form %}
+                <div>
+                    <label for="{{ field.id_for_label }}" class="label">{{ field.label }}: {{ selected_language }}
+                    </label>
+                    {% render_field field class="textarea textarea-bordered textarea-lg w-full h-full" id="user-code"%}
+                </div>
+                {% endfor %}
+                <button type="submit" class="btn btn-primary my-2"> Submit</button>
+                <button type="button" class="btn btn-info my-2" onclick="runCode()" hx-trigger="click"
+                    hx-post="{% url 'run_code' %}" hx-target="#output">Run
+                    Code</button>
+                <div class="" id="output">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="https://unpkg.com/htmx.org@1.6.1/dist/htmx.js"></script>
+<script>
+    function runCode() {
+        // Display "Running..."
+        const outputDiv = document.getElementById('output');
+        outputDiv.textContent = 'Running...';
+    }
+</script>
+{% else %}
+<h1 class="text-8xl text-red-500">BEING TOO SMART ARE NOT WE ?</h1>
+{% endif %}
+
+{% endblock content %}

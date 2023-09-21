@@ -1,0 +1,1 @@
+![Coding-Competition-Platform](https://socialify.git.ci/Shubham-Jani/Coding-Competition-Platform/image?name=1&owner=1&pattern=Diagonal%20Stripes&theme=Light)

@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+<div>
+    <code>
+        <h1>Code Execution Result</h1>
+    <p>Status: {{ result.status.description }}</p>
+
+    {% if result.compile_output %}
+    <h2>Compilation Error</h2>
+    <div class="card rounded-none bg-black text-red-600 text-lg font-semibold w-3/4">
+        <pre>{{ result.compile_output }}</pre>
+       </div>
+    {% endif %}
+
+    {% if result.stdout %}
+    <h2>Standard Output:</h2>
+   <div class="card rounded-none bg-black text-green-400 text-lg font-semibold w-3/4">
+    <pre>{{ result.stdout }}</pre>
+   </div>
+    {% endif %}
+
+    {% if result.stderr %}
+    <h2>Error Output</h2>
+    <pre class="text-red-600">{{ result.stderr }}</pre>
+    </code>
+</div>
+{% endif %}
+
+{% endblock %}

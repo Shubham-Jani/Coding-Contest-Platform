@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% load widget_tweaks %}
+<div class="flex justify-center items-center h-screen">
+    <form method="post" class="w-1/4">
+        <h1 class="font-sans text-3xl font-extrabold my-5">Login</h1>
+        {% csrf_token %}
+
+        {% for error in form.non_field_errors %}
+        <div class="mb-4">
+            <p class="text-red-500 text-sm mt-1">{{ error }}</p>
+        </div>
+        {% endfor %}
+
+        <div class="mb-4">
+            <label for="{{ form.username.id_for_label }}" class="block text-neutral-content ">Username</label>
+            {% render_field form.username class="input w-full input-bordered" %}
+            {% for error in form.username.errors %}
+            <p class="text-red-500 text-sm mt-1">{{ error }}</p>
+            {% endfor %}
+        </div>
+
+        <div class="mb-4">
+            <label for="{{ form.password.id_for_label }}" class="block text-neutral-content">Password</label>
+            {% render_field form.password type="password" class="input w-full input-bordered" %}
+            {% for error in form.password.errors %}
+            <p class="text-red-500 text-sm mt-1">{{ error }}</p>
+            {% endfor %}
+        </div>
+
+        <button type="submit" class="btn btn-primary">Login</button>
+    </form>
+</div>
+
+{% endblock content %}

@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% if has_round_started %}
+<div class="flex flex-col h-screen w-screen items-center justify-center">
+    {% include 'remaining_time.html' with round=contest_round %}
+    {% include 'user_profile.html' %}
+    <h1 class="font-sans text-3xl font-extrabold my-5">Problem Selection:</h1>
+    {% for problem in round_problems %}
+    <div class="card bg-base-100 shadow-xl w-1/2">
+        <div class="card-body">
+            <h2 class="card-title">{{ problem.problem_name }}</h2>
+            <div class="card-actions justify-end">
+                {% if problem.id in unsolved_problems %}
+                <!-- If the user has solved the problem, disable the button -->
+                <a href="{% url 'submit_response' round_id problem.id %}">
+                    <button class="btn btn-primary ">Solve</button>
+                </a>
+                {% else %}
+                <!-- If the user has not solved the problem, provide the link to solve the problem -->
+                <button class="btn btn-primary btn-disabled" disabled>Solved</button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    <div class="m-4">
+        <a href="{% url 'select_round' %}">
+            <button class="btn btn-neutral">
+                Round Selection
+            </button>
+        </a>
+    </div>
+</div>
+
+{% else %}
+<h1 class="text-8xl text-red-500">BEING TOO SMART ARE NOT WE ?</h1>
+{% endif %}
+{% endblock content %}

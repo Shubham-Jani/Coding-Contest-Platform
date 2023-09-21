@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>{{ round.label }}</h2>
+<div>
+    {% for problem in problems %}
+    <div>
+        <h3>{{ problem.problem_name }}</h3>
+        {{ problem.content }}
+    </div>
+    {% endfor %}
+</div>
+{% endblock content %}

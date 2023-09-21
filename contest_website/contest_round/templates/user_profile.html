@@ -1,0 +1,28 @@
+<!-- user_profile_component.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="flex content-between w-fit bg-base-200 [&>*]:mx-6">
+    <div class="m-3 ">
+        <h2 class="text-lg font-semibold">User-ID</h2>
+        <p>{{ user.pk }}</p>
+    </div>
+    <div class="m-3 ">
+        <h2 class="text-lg font-semibold">Username</h2>
+        <p>{{ user.username }}</p>
+    </div>
+    <div class="m-3">
+        <h2 class="text-lg font-semibold">Email</h2>
+        <p>{{ user.email }}</p>
+    </div>
+    <div class="m-3">
+        <h2 class="text-lg font-semibold">Default Language</h2>
+        {% if user.userprofile.default_language %}
+            <p>{{ user.userprofile.default_language }}</p>
+        {% else %}
+            <p>No default language set.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock content %}
+    
