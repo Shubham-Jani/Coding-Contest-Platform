@@ -113,7 +113,7 @@ Once the containers are up and running, you can access the Coding-Competition-Pl
 
 ## ✍️ Authors <a name = "authors"></a>
 
-- [@Shubham-Jani](https://github.com/Shubham-Jani) - Idea & Initial work
+- [@Shubham-Jani](https://github.com/Shubham-Jani)
 
 
 
