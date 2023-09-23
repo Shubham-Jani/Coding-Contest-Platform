@@ -57,13 +57,16 @@ In the project's root directory, create two `.env` files: `.env.prod` and `.env.
 .env.prod
 
 ```env
-SECRET_KEY=your_secret_key
 DEBUG=False
-DB_NAME=your_database_name
-DB_USER=your_database_user
-DB_PASSWORD=your_database_password
-DB_HOST=db
-DB_PORT=5432
+SECRET_KEY=your
+DJANGO_ALLOWED_HOSTS=*
+SQL_ENGINE=django.db.backends.postgresql
+SQL_DATABASE=your
+SQL_USER=your
+SQL_PASSWORD=your
+SQL_HOST=your
+SQL_PORT=5432
+DATABASE=postgres
 
 ```
 
