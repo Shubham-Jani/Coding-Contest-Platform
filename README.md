@@ -105,7 +105,8 @@ docker-compose -f docker-compose.prod.yml exec web python manage.py createsuperu
 
 ```
 
-- Judge0 may not work properly and you may have to do this (in ubuntu)
+- Judge0 may not work properly because of judge0 only supporting cgroupsv1 and most systems now use cgroupsv2 you can solve this 
+  in ubuntu using the command below 
   ```bash
   sudo nano /etc/default/grub
   # edit this line, and save:
