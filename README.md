@@ -84,6 +84,7 @@ POSTGRES_PASSWORD=your_database_password
 Use Docker Compose to build and run the containers defined in `docker-compose.prod.yml`:
 
 ```bash
+sudo docker network create contest_network
 docker-compose -f docker-compose.prod.yml up --build -d
 
 ```
