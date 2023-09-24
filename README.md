@@ -105,7 +105,16 @@ docker-compose -f docker-compose.prod.yml exec web python manage.py createsuperu
 
 ```
 
-5. Access the Application
+- Judge0 may not work properly and you may have to do this (in ubuntu)
+  ```bash
+  sudo nano /etc/default/grub
+  # edit this line, and save:
+  GRUB_CMDLINE_LINUX="systemd.unified_cgroup_hierarchy=0"
+  sudo update-grub
+  sudo reboot
+  ```
+
+1. Access the Application
 
 Once the containers are up and running, you can access the Coding-Competition-Platform at `localhost:1337`.
 
