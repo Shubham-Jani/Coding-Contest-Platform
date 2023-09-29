@@ -5,6 +5,12 @@ from .models import Problem, ContestRound, UserResponse, UserProfile, UserRespon
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django_ace import AceWidget
+from ace_overlay.widgets import AceOverlayWidget
+
+admin.site.site_header = "Algorithm Arena Admin"
+admin.site.site_title = "Aglorithm Arena"
+admin.site.index_title = "Algorithm Arena"
 
 
 class HomePageAdmin(admin.ModelAdmin):
@@ -18,19 +24,49 @@ class UserProfileInline(admin.StackedInline):
     max_num = 1
     readonly_fields = ["default_language"]
 
-
 class ResponsePointInline(admin.StackedInline):
     model = UserResponsePoints
     extra = 0
+class UserResponseForm(forms.ModelForm):
+    class Meta:
+        model = UserResponse
+        fields = '__all__'
+        widgets = {
+            'code': AceOverlayWidget(
+                wordwrap=False,
+                theme="terminal",
+                width="full",
+                height="85vh",
+                attrs={'class': 'custom-ace-widget'},
+            )
+        }
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-
+        # Set all form fields to be disabled
+        for field_name, field in self.fields.items():
+            field.widget.attrs['disabled'] = 'disabled'
+        # Access the currently edited user object through 'instance'
+        user_response = kwargs.get('instance')
+        if user_response:
+            # Access the user related to this user response
+            user = user_response.user
+            # Access the user's profile
+            try:
+                user_profile = UserProfile.objects.get(user=user)
+                # Determine the language mode from the user's profile
+                default_language = user_profile.default_language.identifier if user_profile.default_language else 'python'
+                # Set the mode parameter for the AceWidget based on the 'default_language'
+                self.fields['code'].widget.mode = default_language
+            except UserProfile.DoesNotExist:
+                # Handle the case where the user doesn't have a profile or the profile is not set
+                pass
 class UserResponseInline(admin.StackedInline):
     model = UserResponse
+    form = UserResponseForm 
     extra = 0  # Set this to 0 to prevent the inline form from being added automatically
-    inlines = [ResponsePointInline]
-    readonly_fields = ["code", "submission_time",
-                       "contest_round", "has_solved", "problem"]
-
+    list_display = ['user', 'problem', 'submission_time']
+    readonly_fields = ['user','contest_round','problem','submission_time','has_submitted']
 # Create a custom admin class for the User model
 
 

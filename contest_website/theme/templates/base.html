@@ -18,3 +18,22 @@
 			
 	</body>
 </html>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    // Get all buttons you want to add the confirmation to
+    var buttons = document.querySelectorAll(".confirm-button");
+
+    // Add a click event listener to each button
+    buttons.forEach(function (button) {
+        button.addEventListener("click", function (event) {
+            // Display a confirmation dialog
+            var result = window.confirm("Are you sure you want to proceed?");
+
+            // If the user confirms, the event continues; otherwise, it's canceled
+            if (!result) {
+                event.preventDefault(); // Prevent the default button behavior
+            }
+        });
+    });
+});
+</script>

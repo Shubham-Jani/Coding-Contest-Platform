@@ -2,7 +2,6 @@
 {% load widget_tweaks %}
 {% load static %}
 
-
 <script type="text/javascript" src="{% static " ckeditor/ckeditor-init.js" %}"></script>
 <script type="text/javascript" src="{% static " ckeditor/ckeditor/ckeditor.js" %}"></script>
 {% block content %}
@@ -17,7 +16,7 @@
             <p class=" text-2xl font-semibold my-5">{{ problem.problem_name }}</p>
             <div>
                 <h1></h1>
-                <article class="prose lg:prose-lg">{{ problem.content|safe }}
+                <article class="prose lg:prose-lg p-2">{{ problem.content|safe }}
                 </article>
             </div>
         </div>
@@ -28,10 +27,11 @@
                 <div>
                     <label for="{{ field.id_for_label }}" class="label">{{ field.label }}: {{ selected_language }}
                     </label>
-                    {% render_field field class="textarea textarea-bordered textarea-lg w-full h-full" id="user-code"%}
+                    {% render_field field class="textarea textarea-bordered textarea-lg w-full" id="user-code"%}
                 </div>
                 {% endfor %}
-                <button type="submit" class="btn btn-primary my-2"> Submit</button>
+                <button type="submit" class="btn btn-primary my-2 confirm-button" name="action" value="submit"> Submit</button>
+                <button type="submit" class="btn btn-primary my-2 confirm-button" name="action" value="save"> Save & solve other question</button>
                 <button type="button" class="btn btn-info my-2" onclick="runCode()" hx-trigger="click"
                     hx-post="{% url 'run_code' %}" hx-target="#output">Run
                     Code</button>

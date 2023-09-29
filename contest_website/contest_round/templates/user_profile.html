@@ -1,7 +1,4 @@
 <!-- user_profile_component.html -->
-{% extends 'base.html' %}
-
-{% block content %}
 <div class="flex content-between w-fit bg-base-200 [&>*]:mx-6">
     <div class="m-3 ">
         <h2 class="text-lg font-semibold">User-ID</h2>
@@ -23,6 +20,10 @@
             <p>No default language set.</p>
         {% endif %}
     </div>
+    <div class="m-3">
+        <a href="{% url 'logout' %}">
+            <button class="btn btn-warning confirm-button">Logout</button>
+        </a>
+    </div>    
 </div>
-{% endblock content %}
     

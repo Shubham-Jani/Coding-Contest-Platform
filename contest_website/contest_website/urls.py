@@ -17,18 +17,23 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from ckeditor_uploader import views as ckeditor_views
-from contest_round.views import CustomLoginView, UserResponseSubmitView, LanguageSelectionView, check_round_started, SelectRound, ProblemSelectView, RunCodeView, RemainingTimeView, HomePageView
+from contest_round.views import (CustomLoginView, UserResponseSubmitView, LanguageSelectionView, check_round_started,
+                                  SelectRound, ProblemSelectView, RunCodeView, RemainingTimeView, HomePageView,logout_view,
+                                  save_code_and_redirect)
 from django.conf import settings
 from django.conf.urls.static import static
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('ckeditor/', include('ckeditor_uploader.urls')),
     path('ckeditor/upload/', ckeditor_views.upload, name='ckeditor_upload'),
     path('login/', CustomLoginView.as_view(), name='login'),
+    path('logout/',logout_view,name="logout"),
 
     # Add the URL pattern for the user response submission view
     path('submit_response/<int:contest_round_id>/<int:problem_id>/',
          UserResponseSubmitView.as_view(), name='submit_response'),
+    path("save_code/<int:contest_round_id>/<int:problem_id>/", save_code_and_redirect, name="save_code_and_redirect"),
     path('language_selection/',
          LanguageSelectionView.as_view(), name='language_selection'),
     path('select_round/', SelectRound.as_view(), name='select_round'),

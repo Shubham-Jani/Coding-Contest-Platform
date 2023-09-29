@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 import datetime
 from django.utils import timezone
 from django.core.exceptions import ValidationError
-
+from django.db.models import UniqueConstraint
 
 class SupportedLanguage(models.Model):
     name = models.CharField(max_length=100)
@@ -62,10 +62,15 @@ class UserResponse(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     code = models.TextField()
     submission_time = models.TimeField(null=True)
-    has_solved = models.BooleanField(default=False)
+    has_submitted = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.user.username}'s response to '{self.problem.problem_name}'"
+    class Meta:
+        # Define a unique constraint to ensure one response per user per problem
+        constraints = [
+            UniqueConstraint(fields=['user', 'problem'], name='unique_user_response')
+        ]
 
 
 class UserResponsePoints(models.Model):

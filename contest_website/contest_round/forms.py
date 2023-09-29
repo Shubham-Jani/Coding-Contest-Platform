@@ -11,5 +11,7 @@ class LanguageSelectionForm(forms.Form):
 class UserResponseForm(forms.Form):
     code = forms.CharField(widget=AceWidget(theme="twilight",
                                             width="100%",
-                                            height="800px",
-                                            fontsize="14pt",))
+                                            height="85vh",
+                                            fontsize="14pt",
+                                            attrs={'class': 'custom-ace-widget'}
+                                            ))

@@ -15,7 +15,8 @@ import json
 import requests
 import time
 from django.conf import settings
-
+from django.http import HttpResponseBadRequest
+from django.contrib.auth import logout
 
 class HomePageView(View):
     template_name = "home_page.html"
@@ -35,16 +36,16 @@ class ProblemSelectView(View):
         has_round_started = selected_round.has_started
         user_responses = UserResponse.objects.filter(
             contest_round=selected_round, user=request.user)
-
+        
         # Create a dictionary to store whether each problem is solved by the user
         unsolved_problems = {problem.id for problem in round_problems}
 
         # Check if the user has submitted responses for each problem
         for user_response in user_responses:
-            if user_response.problem_id in unsolved_problems:
+            if user_response.problem_id in unsolved_problems and  user_response.has_submitted:
                 unsolved_problems.discard(user_response.problem_id)
-        print(type(unsolved_problems))
-        return render(request, self.template_name, {"contest_round": selected_round, "round_problems": round_problems, "round_id": round_id, "unsolved_problems": unsolved_problems, "has_round_started": has_round_started})
+        return render(request, self.template_name, {"contest_round": selected_round, "round_problems": round_problems, "round_id": round_id,
+                                                     "unsolved_problems": unsolved_problems, "has_round_started": has_round_started})
 
     def post(self, request):
         # If a POST request is not allowed for this view, respond with a 405 Method Not Allowed error
@@ -67,6 +68,10 @@ class SelectRound(View):
 class CustomLoginView(LoginView):
     template_name = 'login.html'  # Replace 'login.html' with your login template
     success_url = "language_selection"
+
+def logout_view(request):
+    logout(request)
+    return redirect("login")
 
 
 @method_decorator(login_required, name="dispatch")
@@ -110,8 +115,16 @@ class UserResponseSubmitView(View):
 
         # Set the mode parameter for the AceWidget based on the user's default language
         form.fields['code'].widget.mode = default_language
+        existing_response = UserResponse.objects.filter(
+            contest_round=contest_round, problem=problem, user=request.user
+            ).first()
+        if existing_response and existing_response.has_submitted == False:
+            form.initial['code'] = existing_response.code
 
-        return render(request, self.template_name, {'contest_round': contest_round, 'problem': problem, 'form': form, 'selected_language': user_profile.default_language, 'selected_language_id': user_profile.default_language.judge0_id, "has_round_started": has_round_started})
+        return render(request, self.template_name, {'contest_round': contest_round, 'problem': problem, 'form': form,
+                                                    'selected_language': user_profile.default_language,
+                                                    'selected_language_id': user_profile.default_language.judge0_id,
+                                                    "has_round_started": has_round_started})
 
     def post(self, request, contest_round_id, problem_id):
         contest_round = get_object_or_404(ContestRound, pk=contest_round_id)
@@ -121,15 +134,38 @@ class UserResponseSubmitView(View):
         form = UserResponseForm(request.POST)
 
         if form.is_valid():
+            existing_response = UserResponse.objects.filter(
+            contest_round=contest_round, problem=problem, user=request.user
+            ).first()
+            if existing_response and existing_response.has_submitted:
+                # If a response already exists, return an error message or redirect
+                return HttpResponseBadRequest("You have already submitted a response for this problem.")
+
             code = form.cleaned_data['code']
             current_time = time.strftime("%H:%M:%S")
-            UserResponse.objects.create(
-                contest_round=contest_round, problem=problem, user=request.user, code=code, has_solved=True, submission_time=current_time)
-            # Add additional logic here, e.g., checking the submission
+            action = request.POST.get('action')
+            # Try to get an existing UserResponse object
+            existing_response, created = UserResponse.objects.get_or_create(
+                contest_round=contest_round, problem=problem, user=request.user,
+                defaults={'code': code, 'has_submitted': False, 'submission_time': current_time}
+            )
 
+            if not created:
+                # If the object already exists, update its attributes
+                existing_response.code = code
+                existing_response.submission_time = current_time
+                existing_response.has_submitted = False if action == "save" else True
+                existing_response.save()
             return redirect('problem_page', contest_round_id)
         else:
             return render(request, self.template_name, {'contest_round': contest_round, 'problem': problem, 'form': form})
+
+def save_code_and_redirect(request,contest_round_id,problem_id):
+    print("wtf")
+    if request.method == 'POST':
+        code = request.POST.get('user-code')
+        print(code + "hello")
+    return redirect('problem_page', contest_round_id)
 
 
 def check_round_started(request):
@@ -140,10 +176,6 @@ def check_round_started(request):
     else:
         # Handle other cases as needed
         return JsonResponse({'has_started': False})
-
-# running code (experimental)
-
-
 class RunCodeView(View):
     template_name = 'code_result.html'
 
