@@ -7,16 +7,17 @@
 {% block content %}
 {% if has_round_started %}
 {{ form.media }}
+<button id="fullscreen-button" style="display: none;"></button>
 <div class="h-screen w-full">
     <div class="w-full grid grid-cols-2">
-        <div class="border border-base-100 p-2 h-screen  overflow-scroll">
+        <div class="border border-base-100 p-4 h-screen  overflow-scroll">
             {% include 'remaining_time.html' with round=contest_round %}
             {% include 'user_profile.html' %}
             <p class=" text-xl font-bold my-5">{{ contest_round.round_label }}</p>
             <p class=" text-2xl font-semibold my-5">{{ problem.problem_name }}</p>
             <div>
                 <h1></h1>
-                <article class="prose lg:prose-lg p-2">{{ problem.content|safe }}
+                <article class="prose lg:prose-lg">{{ problem.content|safe }}
                 </article>
             </div>
         </div>
