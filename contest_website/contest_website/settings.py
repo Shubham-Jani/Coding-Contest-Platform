@@ -30,7 +30,7 @@ DEBUG = False
 
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
 # ALLOWED_HOSTS = ["*"]
-CSRF_TRUSTED_ORIGINS = ['http://localhost:1337',"http://192.168.12.167:1337","http://localhost:80",
+CSRF_TRUSTED_ORIGINS = ['http://localhost:1337', "http://192.168.12.167:1337", "http://localhost:80",
                         "http://192.168.12.167:80"]
 # Application definition
 

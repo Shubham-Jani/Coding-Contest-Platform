@@ -139,7 +139,7 @@ class UserResponseSubmitView(View):
             ).first()
             if existing_response and existing_response.has_submitted:
                 # If a response already exists, return an error message or redirect
-                return HttpResponseBadRequest("You have already submitted a response for this problem.")
+                return HttpResponseBadRequest("<h1>You have already submitted a response for this problem.</h1>")
 
             code = form.cleaned_data['code']
             current_time = time.strftime("%H:%M:%S")
