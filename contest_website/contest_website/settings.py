@@ -21,15 +21,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY")
+SECRET_KEY = os.environ.get("SECRET_KEY","somekeyisthisbrohello123")
 # SECRET_KEY = "somekeyisthisbrohello123"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = bool(os.environ.get("DEBUG", default=0))
 DEBUG = False
+# DEBUG = True
 
-ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
-# ALLOWED_HOSTS = ["*"]
+# ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
+ALLOWED_HOSTS = ["192.168.12.167","localhost","127.0.0.1"]
 CSRF_TRUSTED_ORIGINS = ['http://localhost:1337', "http://192.168.12.167:1337", "http://localhost:80",
                         "http://192.168.12.167:80"]
 # Application definition
@@ -52,6 +53,7 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'nested_admin',
     'ace_overlay',
+    'import_export',
 ]
 TAILWIND_APP_NAME = 'theme'
 
@@ -170,6 +172,14 @@ CKEDITOR_UPLOAD_PATH = "uploads/"  # Specify the path for uploaded files
 #         'filebrowserImageUploadUrl': '/ckeditor/upload/',
 #     },
 # }
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'full',
+        'extraPlugins': ','.join([
+            'codesnippet',
+        ]),
+    },
+}
 CKEDITOR_BASEPATH = "/static/ckeditor/ckeditor/"
 
 LOGIN_URL = 'login'
@@ -181,3 +191,4 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 TIME_ZONE = "Asia/Kolkata"
 USE_TZ = True
 JUDGE0_API_URL = 'http://server:2358/submissions'
+# JUDGE0_API_URL = 'http://localhost:2358/submissions'

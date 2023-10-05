@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
 {% load widget_tweaks %}
 {% load static %}
-
 <script type="text/javascript" src="{% static " ckeditor/ckeditor-init.js" %}"></script>
 <script type="text/javascript" src="{% static " ckeditor/ckeditor/ckeditor.js" %}"></script>
 {% block content %}
 {% if has_round_started %}
 {{ form.media }}
-<button id="fullscreen-button" style="display: none;"></button>
+<div id="fullscreen-container">
+    <button id="fullscreen-button" style="display: none;"></button>
 <div class="h-screen w-full">
     <div class="w-full grid grid-cols-2">
         <div class="border border-base-100 p-4 h-screen  overflow-scroll">
@@ -42,14 +42,67 @@
         </div>
     </div>
 </div>
-<script src="https://unpkg.com/htmx.org@1.6.1/dist/htmx.js"></script>
+</div>
+<!-- Include highlight.js -->
+<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/default.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script> -->
+<script src="{% static 'js/highlight.pack.js' %}"></script>
+
+<script src="{% static 'js/htmx.min.js' %}"></script>
+<script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
 <script>
     function runCode() {
         // Display "Running..."
         const outputDiv = document.getElementById('output');
         outputDiv.textContent = 'Running...';
     }
+    $(document).ready(function() {
+        // Trigger a click event on the button to enter fullscreen mode
+        var fullscreenButton = $("#fullscreen-button");
+        if (fullscreenButton.length) {
+            fullscreenButton.click();
+        }
+
+        $(document).on("visibilitychange", function() {
+            if (document.hidden) {
+                // Get the CSRF token from the page's DOM
+                const csrfTokenElement = $('input[name="csrfmiddlewaretoken"]');
+                const csrfToken = csrfTokenElement.val();
+        
+                if (csrfToken) {
+                    // JavaScript code in your main template or included script
+                    $.ajax({
+                        type: "POST",
+                        url: "/increment_foul/",
+                        data: {},
+                        beforeSend: function(xhr) {
+                            xhr.setRequestHeader("X-CSRFToken", csrfToken);
+                        },
+                        success: function(data, textStatus, xhr) {
+                            if (xhr.status === 200) {
+                                var newFoulCount = data.message;
+
+                                // Replace the content of an element with a specific ID
+                                $("#user_foul_count").text(newFoulCount);
+                                alert("Malicious Activity Found")
+                            } else {
+                                // Handle other status codes or responses here
+                            }
+                        },
+                        error: function(xhr, textStatus, errorThrown) {
+                            // Handle errors here
+                            console.error(errorThrown);
+                        }
+                    });
+                }
+            }
+        });
+    });
 </script>
+<script src="{% static 'js/highlight.min.js' %}"></script>
+<link rel="stylesheet" href="{% static 'css/nord.min.css' %}">
+<script>hljs.highlightAll();</script>
+
 {% else %}
 <h1 class="text-8xl text-red-500">BEING TOO SMART ARE NOT WE ?</h1>
 {% endif %}

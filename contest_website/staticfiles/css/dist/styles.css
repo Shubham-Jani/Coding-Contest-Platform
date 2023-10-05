@@ -2424,12 +2424,12 @@ html {
   display: grid;
 }
 
-.h-6 {
-  height: 1.5rem;
+.hidden {
+  display: none;
 }
 
-.h-full {
-  height: 100%;
+.h-6 {
+  height: 1.5rem;
 }
 
 .h-screen {
@@ -2537,8 +2537,8 @@ html {
   stroke: currentColor;
 }
 
-.p-2 {
-  padding: 0.5rem;
+.p-4 {
+  padding: 1rem;
 }
 
 .pb-1 {

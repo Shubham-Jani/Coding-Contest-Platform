@@ -7,10 +7,31 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django_ace import AceWidget
 from ace_overlay.widgets import AceOverlayWidget
+from django.contrib.auth.models import Group
+from django.urls import reverse
+from django.utils.html import format_html
+from import_export import resources
+from import_export.admin import ImportExportModelAdmin
+from import_export import resources, fields
+from import_export.widgets import ForeignKeyWidget
 
 admin.site.site_header = "Algorithm Arena Admin"
 admin.site.site_title = "Aglorithm Arena"
 admin.site.index_title = "Algorithm Arena"
+
+
+class UserResponseResource(resources.ModelResource):
+    user_username = fields.Field(
+        column_name='username',
+        attribute='user__username',
+    )
+
+    class Meta:
+        model = UserResponse
+        fields = ('user_username', 'contest_round__round_label','contest_round__start_time',
+                  'contest_round__round_duration',
+                   'problem__problem_name', 'code',
+                    'submission_time', 'has_submitted')
 
 
 class HomePageAdmin(admin.ModelAdmin):
@@ -22,7 +43,7 @@ class UserProfileInline(admin.StackedInline):
     model = UserProfile
     can_delete = False
     max_num = 1
-    readonly_fields = ["default_language"]
+    readonly_fields = ["default_language","foul_count"]
 
 class ResponsePointInline(admin.StackedInline):
     model = UserResponsePoints
@@ -40,38 +61,41 @@ class UserResponseForm(forms.ModelForm):
                 attrs={'class': 'custom-ace-widget'},
             )
         }
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
 
-        # Set all form fields to be disabled
-        for field_name, field in self.fields.items():
-            field.widget.attrs['disabled'] = 'disabled'
-        # Access the currently edited user object through 'instance'
-        user_response = kwargs.get('instance')
-        if user_response:
-            # Access the user related to this user response
-            user = user_response.user
-            # Access the user's profile
-            try:
-                user_profile = UserProfile.objects.get(user=user)
-                # Determine the language mode from the user's profile
-                default_language = user_profile.default_language.identifier if user_profile.default_language else 'python'
-                # Set the mode parameter for the AceWidget based on the 'default_language'
-                self.fields['code'].widget.mode = default_language
-            except UserProfile.DoesNotExist:
-                # Handle the case where the user doesn't have a profile or the profile is not set
-                pass
+
 class UserResponseInline(admin.StackedInline):
     model = UserResponse
-    form = UserResponseForm 
+    form = UserResponseForm
     extra = 0  # Set this to 0 to prevent the inline form from being added automatically
-    list_display = ['user', 'problem', 'submission_time']
-    readonly_fields = ['user','contest_round','problem','submission_time','has_submitted']
+
+    # Define a custom method to format the time
+    def get_form(self, request, obj=None, **kwargs):
+        # Check if the user has view-only permissions (change this condition as needed)
+        if not request.user.has_perm('auth.change_user'):
+            return UserResponseForm
+        return super().get_form(request, obj, **kwargs)
+    
+    def formatted_submission_time(self, obj):
+        # Assuming obj.submission_time is a datetime field
+        return obj.submission_time.strftime('%Y-%m-%d %H:%M:%S')
+
+    formatted_submission_time.short_description = 'Formatted Submission Time'  # Customize the column header
+
+    list_display = ['user', 'problem', 'formatted_submission_time']  # Include the formatted time in the list_display
+    readonly_fields = ['user', 'contest_round', 'problem', 'formatted_submission_time', 'has_submitted']
+
 # Create a custom admin class for the User model
 
 
 class CustomUserAdmin(UserAdmin):
     inlines = [UserProfileInline, UserResponseInline]
+    # def change_view(self, request, object_id, form_url='', extra_context=None):
+    #     extra_context = extra_context or {}
+    #     extra_context['show_save'] = False  # Disable the "Save" button
+    #     extra_context['show_save_and_add_another'] = False  # Disable "Save and add another" button
+    #     extra_context['show_save_and_continue'] = False  # Disable "Save and continue editing" button
+    #     return super().change_view(request, object_id, form_url, extra_context=extra_context)
+
 
 
 class ProblemAdminForm(forms.ModelForm):
@@ -124,9 +148,28 @@ class ResponsePointsAdmin(admin.ModelAdmin):
         model = UserResponse
     inlines = [ResponsePointInline]
 
+class UserResponseAdmin(ImportExportModelAdmin):
+    resource_classes = [UserResponseResource]
+    list_display = ['user', 'problem', 'formatted_submission_time']
+    readonly_fields = ['user', 'contest_round', 'problem', 'formatted_submission_time', 'has_submitted']
+    form = UserResponseForm
+    model = UserResponse
+    def change_view(self, request, object_id, form_url='', extra_context=None):
+        extra_context = extra_context or {}
+        extra_context['show_save'] = False  # Disable the "Save" button
+        extra_context['show_save_and_add_another'] = False  # Disable "Save and add another" button
+        extra_context['show_save_and_continue'] = False  # Disable "Save and continue editing" button
+        return super().change_view(request, object_id, form_url, extra_context=extra_context)
+
+    def formatted_submission_time(self, obj):
+        # Assuming obj.submission_time is a datetime field
+        return obj.submission_time.strftime('%H:%M:%S')
+
+    formatted_submission_time.short_description = 'Submission Time'  # Customize the column header
 
 admin.site.unregister(User)
 admin.site.register(User, CustomUserAdmin)
 admin.site.register(ContestRound, ContestRoundAdmin)
 admin.site.register(HomePageContent, HomePageAdmin)
+admin.site.register(UserResponse, UserResponseAdmin)
 # admin.site.register(ResponsePointsAdmin)

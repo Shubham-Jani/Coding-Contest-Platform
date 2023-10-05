@@ -6,9 +6,10 @@ from django.views import View
 from django.views.generic import TemplateView
 from django_ace import AceWidget
 from .forms import UserResponseForm, LanguageSelectionForm
-from .models import UserResponse, Problem, ContestRound, SupportedLanguage, UserProfile, HomePageContent
+from .models import (UserResponse, Problem, ContestRound, SupportedLanguage, UserProfile,
+                      HomePageContent)
 from django.urls import reverse
-from django.http import HttpResponseNotAllowed
+from django.http import HttpResponseNotAllowed,HttpResponse
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 import json
@@ -17,6 +18,8 @@ import time
 from django.conf import settings
 from django.http import HttpResponseBadRequest
 from django.contrib.auth import logout
+import base64
+import urllib.parse
 
 class HomePageView(View):
     template_name = "home_page.html"
@@ -114,7 +117,10 @@ class UserResponseSubmitView(View):
         form = UserResponseForm()
 
         # Set the mode parameter for the AceWidget based on the user's default language
-        form.fields['code'].widget.mode = default_language
+        ace_mode = default_language
+        if ace_mode == 'c' or ace_mode == 'cpp':
+            ace_mode = 'c_cpp'
+        form.fields['code'].widget.mode = ace_mode
         existing_response = UserResponse.objects.filter(
             contest_round=contest_round, problem=problem, user=request.user
             ).first()
@@ -139,7 +145,7 @@ class UserResponseSubmitView(View):
             ).first()
             if existing_response and existing_response.has_submitted:
                 # If a response already exists, return an error message or redirect
-                return HttpResponseBadRequest("<h1>You have already submitted a response for this problem.</h1>")
+                return HttpResponseBadRequest("<h1 style='color:red'>You have already submitted a response for this problem.</h1>")
 
             code = form.cleaned_data['code']
             current_time = time.strftime("%H:%M:%S")
@@ -147,7 +153,7 @@ class UserResponseSubmitView(View):
             # Try to get an existing UserResponse object
             existing_response, created = UserResponse.objects.get_or_create(
                 contest_round=contest_round, problem=problem, user=request.user,
-                defaults={'code': code, 'has_submitted': False, 'submission_time': current_time}
+                defaults={'code': code, 'has_submitted': False if action == "save" else True, 'submission_time': current_time}
             )
 
             if not created:
@@ -159,9 +165,9 @@ class UserResponseSubmitView(View):
             return redirect('problem_page', contest_round_id)
         else:
             return render(request, self.template_name, {'contest_round': contest_round, 'problem': problem, 'form': form})
-
+        
+@method_decorator(login_required, name='dispatch')
 def save_code_and_redirect(request,contest_round_id,problem_id):
-    print("wtf")
     if request.method == 'POST':
         code = request.POST.get('user-code')
         print(code + "hello")
@@ -176,6 +182,12 @@ def check_round_started(request):
     else:
         # Handle other cases as needed
         return JsonResponse({'has_started': False})
+    
+def decode(encoded_data):
+    decoded_data = urllib.parse.unquote(encoded_data)
+    decoded_bytes = base64.b64decode(decoded_data)
+    return decoded_bytes.decode('utf-8')
+@method_decorator(login_required, name='dispatch')
 class RunCodeView(View):
     template_name = 'code_result.html'
 
@@ -185,23 +197,34 @@ class RunCodeView(View):
         language_id = user_profile.default_language.judge0_id
         # Replace with the actual Judge0 API URL
         judge0_api_url = settings.JUDGE0_API_URL
-        print(user_code)
         # Prepare the data to send to the Judge0 API
+        # encoding code
         data = {
             'source_code': user_code,
-            'language_id': language_id
+            'language_id': language_id,
+            'base64_encoded': True
         }
         # Make a POST request to the Judge0 API to submit the code
         response = requests.post(judge0_api_url, json=data)
         submission_token = response.json().get('token')
+        print(f"submission token: {submission_token}")
         # Sleep for 5 seconds (adjust the duration as needed)
         while (True):
-            code_output_url = f"{judge0_api_url}/{submission_token}"
+            code_output_url = f"{judge0_api_url}/{submission_token}?base64_encoded=true"
             time.sleep(2)
             code_output = requests.get(code_output_url)
             result = code_output.json()
-            if (result["status"]["description"] != "Processing" != "In Queue"):
+            if result["status"]["description"] not in ["Processing", "In Queue"]:
+                for key, value in result.items():
+                    if isinstance(value, str):
+                        try:
+                            decoded_value = decode(value)
+                            result[key] = decoded_value
+                        except (TypeError, UnicodeDecodeError):
+                            pass  # Skip decoding if it's not a valid Base64-encoded string
                 break
+
+        print(result)
         # Render the HTML template with the response data and return it
         return render(request, self.template_name, {'result': result})
 
@@ -212,3 +235,24 @@ class RemainingTimeView(View):
     def get(self, request, contest_round_id, *args, **kwargs):
         round = get_object_or_404(ContestRound, contest_round_id)
         return render(request, self.template_name, {'round': round})
+@method_decorator(login_required, name='dispatch')
+class GetFoulView(View):
+    def get(self,request):
+        current_foul_object = UserProfile.objects.get(user=request.user)
+        return JsonResponse({"foul_count":current_foul_object.count})
+@method_decorator(login_required, name='dispatch')
+class IncrementFoulView(View):
+    def post(self, request):
+        try:
+            current_foul_object = UserProfile.objects.get(user=request.user)
+            current_foul_object.foul_count += 1
+            current_foul_object.save()
+            response_data = {
+                'message': current_foul_object.foul_count,
+            }
+            return JsonResponse(response_data, status=200)
+        except UserProfile.DoesNotExist:
+            response_data = {
+                'message': 'User profile not found.',
+            }
+            return JsonResponse(response_data, status=404)

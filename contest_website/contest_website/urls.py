@@ -19,7 +19,7 @@ from django.urls import path, include
 from ckeditor_uploader import views as ckeditor_views
 from contest_round.views import (CustomLoginView, UserResponseSubmitView, LanguageSelectionView, check_round_started,
                                   SelectRound, ProblemSelectView, RunCodeView, RemainingTimeView, HomePageView,logout_view,
-                                  save_code_and_redirect)
+                                  save_code_and_redirect, IncrementFoulView, GetFoulView)
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -45,7 +45,9 @@ urlpatterns = [
     path('_nested_admin/', include('nested_admin.urls')),
     path('remaining_time/<int:round_id>/',
          RemainingTimeView.as_view(), name='remaining_time'),
-    path('', HomePageView.as_view(), name='home_page')
+    path('', HomePageView.as_view(), name='home_page'),
+    path('increment_foul/',IncrementFoulView.as_view(),name="increment_foul"),
+    path('get_foul/',GetFoulView.as_view(),name="get_foul"),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,

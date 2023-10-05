@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
+{% load static %}
 <div class="flex items-center flex-col h-screen justify-center">
     {% include 'user_profile.html' %}
     <h1 class="font-sans text-3xl font-extrabold my-5">Round Selection:</h1>
@@ -19,5 +20,50 @@
     {% endif %}
     {% endfor %}
 </div>
+<script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+<script>
+    $(document).ready(function() {
+        // Trigger a click event on the button to enter fullscreen mode
+        var fullscreenButton = $("#fullscreen-button");
+        if (fullscreenButton.length) {
+            fullscreenButton.click();
+        }
+
+        $(document).on("visibilitychange", function() {
+            if (document.hidden) {
+                // Get the CSRF token from the page's DOM
+                const csrfTokenElement = $('input[name="csrfmiddlewaretoken"]');
+                const csrfToken = csrfTokenElement.val();
+        
+                if (csrfToken) {
+                    // JavaScript code in your main template or included script
+                    $.ajax({
+                        type: "POST",
+                        url: "/increment_foul/",
+                        data: {},
+                        beforeSend: function(xhr) {
+                            xhr.setRequestHeader("X-CSRFToken", csrfToken);
+                        },
+                        success: function(data, textStatus, xhr) {
+                            if (xhr.status === 200) {
+                                var newFoulCount = data.message;
+
+                                // Replace the content of an element with a specific ID
+                                $("#user_foul_count").text(newFoulCount);
+                                alert("Malicious Activity Found")
+                            } else {
+                                // Handle other status codes or responses here
+                            }
+                        },
+                        error: function(xhr, textStatus, errorThrown) {
+                            // Handle errors here
+                            console.error(errorThrown);
+                        }
+                    });
+                }
+            }
+        });
+    });
+</script>
 
 {% endblock content %}

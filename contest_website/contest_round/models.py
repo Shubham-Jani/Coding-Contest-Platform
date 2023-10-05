@@ -19,10 +19,10 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     default_language = models.ForeignKey(
         SupportedLanguage, on_delete=models.SET_NULL, null=True, blank=True)
+    foul_count = models.IntegerField(default=0)
 
     def __str__(self):
         return self.user.username
-
 
 class ContestRound(models.Model):
     round_label = models.CharField(max_length=250)
@@ -61,7 +61,7 @@ class UserResponse(models.Model):
     problem = models.ForeignKey(Problem, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     code = models.TextField()
-    submission_time = models.TimeField(null=True)
+    submission_time = models.TimeField()
     has_submitted = models.BooleanField(default=False)
 
     def __str__(self):

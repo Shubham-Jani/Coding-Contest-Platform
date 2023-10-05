@@ -7,14 +7,14 @@
 
     {% if result.compile_output %}
     <h2>Compilation Error</h2>
-    <div class="card rounded-none bg-black text-red-600 text-lg font-semibold w-3/4">
+    <div class="card rounded-none bg-black text-red-600 text-lg font-semibold w-full">
         <pre>{{ result.compile_output }}</pre>
        </div>
     {% endif %}
 
     {% if result.stdout %}
     <h2>Standard Output:</h2>
-   <div class="card rounded-none bg-black text-green-400 text-lg font-semibold w-3/4">
+   <div class="card rounded-none bg-black text-green-400 text-lg font-semibold w-3/4 w-full" >
     <pre>{{ result.stdout }}</pre>
    </div>
     {% endif %}
