@@ -31,7 +31,8 @@ class UserResponseResource(resources.ModelResource):
         fields = ('user_username', 'contest_round__round_label','contest_round__start_time',
                   'contest_round__round_duration',
                    'problem__problem_name', 'code',
-                    'submission_time', 'has_submitted')
+                    'submission_time', 'has_submitted','user__userprofile__default_language__name',
+                    'user__userprofile__foul_count')
 
 
 class HomePageAdmin(admin.ModelAdmin):
@@ -150,10 +151,16 @@ class ResponsePointsAdmin(admin.ModelAdmin):
 
 class UserResponseAdmin(ImportExportModelAdmin):
     resource_classes = [UserResponseResource]
-    list_display = ['user', 'problem', 'formatted_submission_time']
+    list_display = ['user', 'problem', 'formatted_submission_time','user_preferred_language']
     readonly_fields = ['user', 'contest_round', 'problem', 'formatted_submission_time', 'has_submitted']
     form = UserResponseForm
     model = UserResponse
+
+    def user_preferred_language(self, obj):
+        return obj.user.userprofile.default_language.name if obj.user.userprofile else ''
+
+    user_preferred_language.short_description = 'Preferred Language'
+    
     def change_view(self, request, object_id, form_url='', extra_context=None):
         extra_context = extra_context or {}
         extra_context['show_save'] = False  # Disable the "Save" button
