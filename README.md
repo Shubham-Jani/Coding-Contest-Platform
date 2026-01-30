@@ -14,15 +14,15 @@
 ---
 ## 📝 Table of Contents
 
-- [📝 Table of Contents](#-table-of-contents)
-- [🧐 About ](#-about-)
+- [Table of Contents](#-table-of-contents)
+- [About ](#-about-)
   - [Prerequisites](#prerequisites)
-- [🚀 Deployment ](#-deployment-)
-- [⛏️ Built Using ](#️-built-using-)
-- [✍️ Authors ](#️-authors-)
-- [🎉 Acknowledgements ](#-acknowledgements-)
+- [Deployment ](#-deployment-)
+- [Built Using ](#️-built-using-)
+- [Authors ](#️-authors-)
+- [Acknowledgements ](#-acknowledgements-)
 
-## 🧐 About <a name = "about"></a>
+## About <a name = "about"></a>
 
 Coding-Competition-Platform" is an open-source Django project designed for hosting coding competitions and contests. It's easy to set up using Docker, making it suitable for educational institutions and coding clubs. The platform supports custom problem creation and competition rounds, and future plans include test case support.
 
@@ -40,7 +40,7 @@ Once you have these prerequisites in place, you'll be ready to set up and run "C
 
 
 
-## 🚀 Deployment <a name = "deployment"></a>
+## Deployment <a name = "deployment"></a>
 
 1. Clone the Repository
 
@@ -120,18 +120,19 @@ docker-compose -f docker-compose.prod.yml exec web python manage.py createsuperu
 
 Once the containers are up and running, you can access the Coding-Competition-Platform at `localhost:1337`.
 
-## ⛏️ Built Using <a name = "built_using"></a>
+## Built Using <a name = "built_using"></a>
 
 - [Django](https://www.djangoproject.com/) - Web Framework
 - [Tailwind-CSS](https://tailwindcss.com/) -FrontEnd
   
 
-## ✍️ Authors <a name = "authors"></a>
+## Authors <a name = "authors"></a>
 
 - [@Shubham-Jani](https://github.com/Shubham-Jani)
 
 
 
-## 🎉 Acknowledgements <a name = "acknowledgement"></a>
+## Acknowledgements <a name = "acknowledgement"></a>
 
 - Judge0
+
